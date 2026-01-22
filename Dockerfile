@@ -18,14 +18,15 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
+    curl \
     libmagic1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Create app directory
-WORKDIR /app
-
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash appuser
+
+# Create and set permissions on app directory
+RUN mkdir -p /app && chown appuser:appuser /app
 
 # =============================================================================
 # Production stage
@@ -33,8 +34,7 @@ RUN useradd --create-home --shell /bin/bash appuser
 FROM base AS production
 
 # Copy entrypoint script
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/
 
 # Set default environment
 ENV APP_ENV=production \
@@ -45,12 +45,12 @@ ENV APP_ENV=production \
 # Expose port
 EXPOSE 8056
 
-# Change ownership and switch to non-root user
-RUN chown -R appuser:appuser /app
+# Switch to non-root user
 USER appuser
+WORKDIR /app
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:${APP_PORT}/health || exit 1
 
 # Entrypoint handles git clone/pull based on APP_ENV
@@ -63,13 +63,11 @@ FROM base AS development
 
 # Install development dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
     vim \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy entrypoint script
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/
 
 # Set default environment for development
 ENV APP_ENV=development \
@@ -81,7 +79,11 @@ ENV APP_ENV=development \
 # Expose port
 EXPOSE 8056
 
-# For development, we might want to run as root for easier debugging
-# In production, always use non-root user
+WORKDIR /app
 
+# Health check with longer start period for development
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=5 \
+    CMD curl -f http://localhost:${APP_PORT}/health || exit 1
+
+# Entrypoint handles git clone/pull based on APP_ENV
 ENTRYPOINT ["docker-entrypoint.sh"]
