@@ -5,15 +5,12 @@
 #   ./deploy.sh development   # Development mode (dev branch)
 #   ./deploy.sh production    # Production mode (master branch)
 #
-# Directory structure (all inside git repo at /opt/app):
-#   /opt/app/              - Git repository root
+# Directory structure (code separate from data volumes):
+#   /opt/app/code/         - Git repository (application source)
 #   /opt/app/data/         - Persistent data (Docker volume)
 #   /opt/app/logs/         - Application logs (Docker volume)
 #   /opt/app/config/       - Configuration files (Docker volume)
-#   /opt/app/scanmountvolume/  - Application source code
 # =============================================================================
-
-version: '3.8'
 
 services:
   scanmountvolume:
@@ -47,7 +44,7 @@ services:
     volumes:
       # Mount network shares as read-only for scanning
       - /mnt:/mnt:ro
-      # Persist data subdirectories inside the repository
+      # Persist data directories (separate from code directory)
       - scanmountvolume_data:/opt/app/data
       - scanmountvolume_logs:/opt/app/logs
       - scanmountvolume_config:/opt/app/config
