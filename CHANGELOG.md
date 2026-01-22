@@ -10,92 +10,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- [New feature 1 description]
-- [New feature 2 description]
+- Project scope document (PROJECT_SCOPE.md)
+- Technology configuration (PROJECT_CONFIG.md)
+- Master plan with 6 development phases (MASTER_PLAN.md)
+- Repository setup on GitHub
 
-### Changed
-- [Change to existing functionality 1]
-- [Change to existing functionality 2]
-
-### Deprecated
-- [Soon-to-be removed feature 1]
-- [Soon-to-be removed feature 2]
-
-### Removed
-- [Removed feature 1]
-- [Removed feature 2]
-
-### Fixed
-- [Bug fix 1]
-- [Bug fix 2]
-
-### Security
-- [Security fix 1]
-- [Security fix 2]
+### Planned (Next Release: 0.1.0)
+- Database schema and SQLAlchemy models
+- Basic file scanning capability
+- FastAPI web application on port 8056
+- Volume management via web UI
+- File metadata extraction (size, dates, permissions)
+- MySQL database integration
 
 ---
 
-## [1.0.0] - YYYY-MM-DD
+## Version Roadmap
 
-### Added
-- [New feature or functionality added]
-- [New endpoint/API added]
-- [New component/module added]
-- [New test coverage for X]
-- [New documentation for Y]
-
-### Changed
-- [Change to existing functionality]
-- [Updated dependency from version X to Y]
-- [Improved performance of Z]
-- [Refactored component A for better maintainability]
-
-### Deprecated
-- [Feature that will be removed in future version]
-- [Old API endpoint that will be removed]
-
-### Removed
-- [Removed feature/functionality]
-- [Removed deprecated API endpoint]
-- [Removed unused dependency]
-
-### Fixed
-- [Bug fix with description]
-- [Fix for issue #123]
-- [Correction to incorrect behavior in X]
-- [Security vulnerability patched]
-
-### Security
-- [Security patch for vulnerability X]
-- [Updated dependency to fix CVE-YYYY-XXXXX]
-
----
-
-## [0.2.0] - YYYY-MM-DD
-
-### Added
-- [New feature]
-- [New functionality]
-
-### Changed
-- [Breaking change to API]
-- [Updated implementation approach]
-
-### Fixed
-- [Bug fix]
-- [Issue resolution]
-
----
-
-## [0.1.0] - YYYY-MM-DD
-
-### Added
-- Initial release
-- [Core feature 1]
-- [Core feature 2]
-- [Core feature 3]
-- Basic documentation
-- Initial test coverage
+| Version | Milestone | Key Features |
+|---------|-----------|--------------|
+| 0.1.0 | Foundation | Database schema, basic scanning, project structure |
+| 0.2.0 | Analysis | File hashing, MIME detection, duplicate detection |
+| 0.3.0 | Web UI | Dashboard, volume management, authentication |
+| 0.4.0 | Scheduling | Cron scheduling, real-time progress, KPIs |
+| 0.5.0 | CLI | webscanbot CLI tool |
+| 1.0.0 | Release | Full documentation, Docker deployment, tests |
 
 ---
 
@@ -123,7 +62,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Notes
 
 - Each version should have a release date in YYYY-MM-DD format
-- Link to compare versions: `[1.0.0]: https://github.com/username/repo/compare/v0.2.0...v1.0.0`
 - Reference issues/PRs when applicable: `Fixed #123`, `See PR #456`
 - Group related changes together under appropriate categories
 - Keep descriptions concise but meaningful
@@ -133,7 +71,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Comparison Links
 
-[unreleased]: https://github.com/[username]/[repo]/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/[username]/[repo]/compare/v0.2.0...v1.0.0
-[0.2.0]: https://github.com/[username]/[repo]/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/[username]/[repo]/releases/tag/v0.1.0
+[unreleased]: https://github.com/jonathanicq/scanMountVolume/compare/v0.1.0...HEAD
