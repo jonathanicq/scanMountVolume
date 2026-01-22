@@ -192,11 +192,21 @@ pytest -v
 ## Git Workflow
 
 ### Branch Strategy
-- **Main Branch:** `master`
-- **Development Branch:** `develop` (optional, depends on team size)
+- **Main Branch:** `master` (production-ready code)
+- **Development Branch:** `dev` (active development)
 - **Feature Branches:** `feature/descriptive-name`
 - **Fix Branches:** `fix/descriptive-name`
 - **Hotfix Branches:** `hotfix/descriptive-name`
+
+### Environment-Based Branch Selection
+Docker containers automatically pull from the correct branch based on `APP_ENV`:
+
+| APP_ENV | Branch | Purpose |
+|---------|--------|---------|
+| `production` | `master` | Stable, production-ready releases |
+| `development` | `dev` | Active development, testing |
+
+This is handled by `docker-entrypoint.sh` on container startup.
 
 ### Commit Standards
 - Meaningful commit messages (imperative mood)
@@ -213,8 +223,20 @@ pytest -v
 
 ## Environment Variables
 
+### Environment Mode (Critical)
+```bash
+# APP_ENV determines which git branch Docker pulls on startup
+# Options: production, development
+# - production: pulls from 'master' branch, optimized settings
+# - development: pulls from 'dev' branch, debug enabled
+APP_ENV=development
+```
+
 ### Required Variables
 ```bash
+# Environment Mode
+APP_ENV=development
+
 # Database
 MYSQL_HOST=localhost
 MYSQL_PORT=3306
@@ -223,14 +245,14 @@ MYSQL_PASSWORD=your_password_here
 MYSQL_DATABASE=scanmountvolume
 
 # Application
-APP_ENV=development
 APP_SECRET_KEY=your_secret_key_here
 APP_PORT=8056
 APP_HOST=0.0.0.0
+APP_DEBUG=false
 
 # Authentication
 AUTH_USERNAME=admin
-AUTH_PASSWORD_HASH=bcrypt_hash_here
+AUTH_PASSWORD=change_this_password
 
 # Scanning
 SCAN_BATCH_SIZE=1000
@@ -240,6 +262,9 @@ SCAN_WORKERS=4
 # Logging
 LOG_LEVEL=INFO
 LOG_FORMAT=json
+
+# Git (for Docker auto-update)
+GIT_REPO_URL=https://github.com/jonathanicq/scanMountVolume.git
 ```
 
 ---

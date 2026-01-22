@@ -1,0 +1,64 @@
+# =============================================================================
+# scanMountVolume - Docker Compose Configuration
+# =============================================================================
+# Usage:
+#   Development: docker-compose up -d
+#   Production:  docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Environment is controlled by APP_ENV in .env file:
+#   - development → pulls from 'dev' branch
+#   - production  → pulls from 'master' branch
+# =============================================================================
+
+version: '3.8'
+
+services:
+  scanmountvolume:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: ${APP_ENV:-development}
+    container_name: scanmountvolume
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8056}:8056"
+    environment:
+      - APP_ENV=${APP_ENV:-development}
+      - APP_HOST=${APP_HOST:-0.0.0.0}
+      - APP_PORT=${APP_PORT:-8056}
+      - APP_SECRET_KEY=${APP_SECRET_KEY}
+      - APP_DEBUG=${APP_DEBUG:-false}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_PORT=${MYSQL_PORT:-3306}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - AUTH_USERNAME=${AUTH_USERNAME:-admin}
+      - AUTH_PASSWORD=${AUTH_PASSWORD}
+      - SCAN_BATCH_SIZE=${SCAN_BATCH_SIZE:-1000}
+      - SCAN_HASH_ALGORITHM=${SCAN_HASH_ALGORITHM:-sha256}
+      - SCAN_WORKERS=${SCAN_WORKERS:-4}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - LOG_FORMAT=${LOG_FORMAT:-json}
+      - GIT_REPO_URL=${GIT_REPO_URL:-https://github.com/jonathanicq/scanMountVolume.git}
+    volumes:
+      # Mount network shares as read-only for scanning
+      - /mnt:/mnt:ro
+      # Persist application data
+      - scanmountvolume_data:/app/data
+    networks:
+      - scanmountvolume_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8056/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  scanmountvolume_data:
+    driver: local
+
+networks:
+  scanmountvolume_network:
+    driver: bridge
