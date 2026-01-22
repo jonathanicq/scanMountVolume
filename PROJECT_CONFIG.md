@@ -1,103 +1,124 @@
 # Project Configuration
 
-**Project Name:** [Project Name]
-**Created:** [Date]
-**Last Updated:** [Date]
-**Status:** [Planning | In Development | Testing | Production]
+**Project Name:** scanMountVolume
+**Created:** 2026-01-22
+**Last Updated:** 2026-01-22
+**Status:** Planning
 
 ---
 
 ## Overview
 
 **Project Description:**
-[Brief description of what this project does and its purpose]
+A Python-based tool that scans and catalogs contents of mounted network shares (NFS, SMB/CIFS), storing comprehensive file metadata in a remote MySQL database. Includes a web interface for management, scheduling, and real-time monitoring.
 
 **Project Goals:**
-- [Goal 1]
-- [Goal 2]
-- [Goal 3]
+- Scan and catalog network share contents with full metadata
+- Detect duplicate files across volumes
+- Provide web interface for management and monitoring on port 8056
+- Support scheduled and on-demand scans
+- Track file changes including deletions over time
 
 ---
 
 ## Technology Stack
 
 ### Backend
-- **Language:** [e.g., Python, Node.js, Go, Java]
-- **Framework:** [e.g., FastAPI, Express, Gin, Spring Boot]
-- **Version:** [Specific version]
+- **Language:** Python
+- **Version:** 3.10+
+- **Web Framework:** FastAPI
+- **CLI Framework:** Typer
+- **Async Support:** Yes (asyncio, aiofiles)
 
-### Frontend (if applicable)
-- **Language:** [e.g., TypeScript, JavaScript]
-- **Framework:** [e.g., React, Vue, Angular, Svelte]
-- **Version:** [Specific version]
+### Frontend
+- **Type:** Server-rendered templates + minimal JavaScript
+- **Template Engine:** Jinja2 (FastAPI default)
+- **CSS Framework:** Bootstrap 5 or Tailwind CSS
+- **JavaScript:** Vanilla JS or Alpine.js (for reactive updates)
 
 ### Database
-- **Primary Database:** [e.g., PostgreSQL, MongoDB, MySQL]
-- **Version:** [Specific version]
-- **Additional Datastores:** [e.g., Redis for caching, Elasticsearch for search]
+- **Primary Database:** MySQL 8.0+
+- **ORM:** SQLAlchemy 2.0 (async support)
+- **Migrations:** Alembic
+- **Connection:** Remote MySQL server
 
 ### Infrastructure & Deployment
-- **Cloud Provider:** [e.g., AWS, GCP, Azure, Self-hosted]
-- **Container Platform:** [e.g., Docker, Kubernetes]
-- **CI/CD:** [e.g., GitHub Actions, GitLab CI, Jenkins]
-- **Hosting:** [e.g., Vercel, Netlify, EC2, Cloud Run]
+- **Container Platform:** Docker
+- **Container Registry:** GitHub Container Registry (ghcr.io)
+- **CI/CD:** GitHub Actions
+- **Deployment:** Docker Compose or standalone container
 
-### Third-Party Services & APIs
-- [Service 1] - [Purpose]
-- [Service 2] - [Purpose]
-- [Service 3] - [Purpose]
+### Third-Party Libraries
+- **python-magic** - MIME type detection
+- **hashlib** - File hashing (MD5, SHA256)
+- **APScheduler** - Task scheduling
+- **uvicorn** - ASGI server for FastAPI
+- **python-dotenv** - Environment variable management
+- **passlib** - Password hashing for auth
+- **pydantic** - Data validation (FastAPI)
 
 ---
 
 ## Code Style & Standards
 
 ### Naming Conventions
-- **Files:** [e.g., kebab-case, snake_case, PascalCase]
-- **Variables:** [e.g., camelCase, snake_case]
-- **Functions:** [e.g., camelCase, snake_case]
-- **Classes:** [e.g., PascalCase]
-- **Constants:** [e.g., SCREAMING_SNAKE_CASE]
+- **Files:** snake_case (e.g., `file_scanner.py`)
+- **Variables:** snake_case (e.g., `file_count`)
+- **Functions:** snake_case (e.g., `scan_volume()`)
+- **Classes:** PascalCase (e.g., `FileScanner`)
+- **Constants:** SCREAMING_SNAKE_CASE (e.g., `MAX_FILE_SIZE`)
 
 ### Formatting
-- **Formatter:** [e.g., Prettier, Black, gofmt]
-- **Configuration:** [Link to .prettierrc, .editorconfig, etc.]
-- **Max Line Length:** [e.g., 80, 100, 120 characters]
-- **Indentation:** [e.g., 2 spaces, 4 spaces, tabs]
+- **Formatter:** Black
+- **Configuration:** `pyproject.toml`
+- **Max Line Length:** 100 characters
+- **Indentation:** 4 spaces
 
 ### Linting
-- **Linter:** [e.g., ESLint, Pylint, golangci-lint]
-- **Configuration:** [Link to .eslintrc, .pylintrc, etc.]
-- **Pre-commit Hooks:** [Yes/No - specify tool if yes]
+- **Linter:** Ruff (fast, replaces flake8, isort)
+- **Type Checking:** mypy
+- **Configuration:** `pyproject.toml`
+- **Pre-commit Hooks:** Yes (pre-commit framework)
+
+### Import Order
+1. Standard library
+2. Third-party packages
+3. Local application imports
 
 ---
 
 ## Testing Strategy
 
 ### Test Types
-- [ ] Unit Tests
-- [ ] Integration Tests
-- [ ] End-to-End Tests
+- [x] Unit Tests
+- [x] Integration Tests
+- [ ] End-to-End Tests (deferred to v2)
 - [ ] Contract Tests
-- [ ] Performance Tests
+- [ ] Performance Tests (manual for v1)
 
 ### Testing Framework
-- **Framework:** [e.g., Jest, Pytest, Go testing, JUnit]
-- **Coverage Tool:** [e.g., Istanbul, Coverage.py]
-- **Coverage Threshold:** [e.g., 80%, 90%]
+- **Framework:** pytest
+- **Async Testing:** pytest-asyncio
+- **Fixtures:** pytest fixtures
+- **Coverage Tool:** pytest-cov
+- **Coverage Threshold:** 80%
 
 ### Test Commands
 ```bash
 # Run all tests
-[command]
+pytest
 
 # Run unit tests only
-[command]
+pytest tests/unit/
 
 # Run integration tests only
-[command]
+pytest tests/integration/
 
 # Generate coverage report
-[command]
+pytest --cov=scanmountvolume --cov-report=html
+
+# Run with verbose output
+pytest -v
 ```
 
 ---
@@ -105,83 +126,88 @@
 ## Documentation Requirements
 
 ### Required Documentation
-- [ ] README.md with setup instructions
-- [ ] API documentation (Swagger/OpenAPI)
-- [ ] Architecture Decision Records (ADRs)
-- [ ] CHANGELOG.md
-- [ ] Inline code comments (where necessary)
+- [x] README.md with setup instructions
+- [x] API documentation (OpenAPI/Swagger - auto-generated by FastAPI)
+- [x] Architecture Decision Records (ADRs)
+- [x] CHANGELOG.md
+- [x] Inline code comments (where necessary)
+- [x] Configuration documentation
 
 ### API Documentation
-- **Tool:** [e.g., Swagger, OpenAPI, Postman]
-- **Location:** [e.g., /docs, /api-docs]
+- **Tool:** OpenAPI (automatic with FastAPI)
+- **Location:** `/docs` (Swagger UI), `/redoc` (ReDoc)
 
 ---
 
 ## Logging & Monitoring
 
 ### Logging
-- **Framework:** [e.g., Winston, Loguru, Zap]
-- **Format:** [e.g., JSON, Plain text]
-- **Log Levels:** [e.g., DEBUG, INFO, WARN, ERROR]
-- **Sensitive Data Policy:** Never log passwords, tokens, PII
+- **Framework:** Python logging (structlog for structured logs)
+- **Format:** JSON (for production), Plain text (for development)
+- **Log Levels:** DEBUG, INFO, WARNING, ERROR, CRITICAL
+- **Sensitive Data Policy:** Never log passwords, tokens, file contents, PII
+- **Log Location:** stdout (for Docker), optionally file
 
-### Monitoring (if applicable)
-- **APM Tool:** [e.g., DataDog, New Relic, Prometheus]
-- **Error Tracking:** [e.g., Sentry, Rollbar]
-- **Uptime Monitoring:** [e.g., Pingdom, UptimeRobot]
+### Monitoring
+- **Health Check:** `/health` endpoint
+- **Metrics:** Basic scan statistics via API
+- **Error Tracking:** Logged to stdout/file (Sentry optional for future)
 
 ---
 
 ## Security Standards
 
 ### Authentication & Authorization
-- **Method:** [e.g., JWT, OAuth2, Session-based]
-- **Library/Service:** [e.g., Auth0, Passport, Custom]
+- **Method:** Session-based with HTTP Basic Auth
+- **Library:** passlib (bcrypt) for password hashing
+- **Session:** Server-side sessions (secure cookies)
 
 ### Security Checklist
-- [ ] All secrets in environment variables (never hardcoded)
-- [ ] .env.example with placeholder values
-- [ ] .env in .gitignore
-- [ ] Input validation on all external inputs
-- [ ] HTTPS enforced
-- [ ] CORS properly configured
-- [ ] SQL injection prevention (parameterized queries)
-- [ ] XSS prevention (input sanitization)
-- [ ] Rate limiting implemented
+- [x] All secrets in environment variables (never hardcoded)
+- [x] .env.example with placeholder values
+- [x] .env in .gitignore
+- [x] Input validation on all external inputs (Pydantic)
+- [ ] HTTPS enforced (reverse proxy responsibility)
+- [x] CORS properly configured (localhost only by default)
+- [x] SQL injection prevention (SQLAlchemy ORM)
+- [x] XSS prevention (Jinja2 auto-escaping)
+- [ ] Rate limiting implemented (optional for v1)
 
 ---
 
 ## Dependency Management
 
 ### Package Manager
-- **Tool:** [e.g., npm, pip, go modules, Maven]
-- **Lockfile:** [e.g., package-lock.json, poetry.lock, go.sum]
+- **Tool:** pip with pyproject.toml
+- **Lockfile:** requirements.txt (generated from pip-compile or pip freeze)
+- **Dev Dependencies:** requirements-dev.txt
 
 ### Dependency Policy
 - Commit lockfiles to version control
-- Regular dependency updates (schedule: [e.g., monthly])
-- Security audit command: [command]
+- Regular dependency updates (schedule: monthly)
+- Security audit command: `pip-audit`
 
 ---
 
 ## Git Workflow
 
 ### Branch Strategy
-- **Main Branch:** `main` or `master`
-- **Development Branch:** [if applicable]
+- **Main Branch:** `master`
+- **Development Branch:** `develop` (optional, depends on team size)
 - **Feature Branches:** `feature/descriptive-name`
 - **Fix Branches:** `fix/descriptive-name`
 - **Hotfix Branches:** `hotfix/descriptive-name`
 
 ### Commit Standards
-- Meaningful commit messages
-- Commit on: new module, new feature, new version, bug fix, doc update
+- Meaningful commit messages (imperative mood)
+- Format: `type: short description` (e.g., `feat: add volume management API`)
+- Types: feat, fix, docs, style, refactor, test, chore
 - Reference issue numbers when applicable
 
 ### Repository
-- **Repository Type:** Private
+- **Repository Type:** Public
 - **Host:** GitHub
-- **URL:** [Repository URL]
+- **URL:** https://github.com/jonathanicq/scanMountVolume
 
 ---
 
@@ -189,11 +215,31 @@
 
 ### Required Variables
 ```bash
-# Example .env.example structure
-NODE_ENV=development
-DATABASE_URL=postgresql://user:password@localhost:5432/dbname
-API_KEY=your_api_key_here
-JWT_SECRET=your_secret_here
+# Database
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=scanbot
+MYSQL_PASSWORD=your_password_here
+MYSQL_DATABASE=scanmountvolume
+
+# Application
+APP_ENV=development
+APP_SECRET_KEY=your_secret_key_here
+APP_PORT=8056
+APP_HOST=0.0.0.0
+
+# Authentication
+AUTH_USERNAME=admin
+AUTH_PASSWORD_HASH=bcrypt_hash_here
+
+# Scanning
+SCAN_BATCH_SIZE=1000
+SCAN_HASH_ALGORITHM=sha256
+SCAN_WORKERS=4
+
+# Logging
+LOG_LEVEL=INFO
+LOG_FORMAT=json
 ```
 
 ---
@@ -203,42 +249,125 @@ JWT_SECRET=your_secret_here
 ### Build Commands
 ```bash
 # Install dependencies
-[command]
+pip install -r requirements.txt
+
+# Install dev dependencies
+pip install -r requirements-dev.txt
 
 # Build for development
-[command]
+# (no build step needed for Python)
 
-# Build for production
-[command]
+# Run linting
+ruff check .
+
+# Run formatting check
+black --check .
+
+# Run type checking
+mypy scanmountvolume/
 
 # Start development server
-[command]
+uvicorn scanmountvolume.main:app --reload --port 8056
 
 # Start production server
-[command]
+uvicorn scanmountvolume.main:app --host 0.0.0.0 --port 8056 --workers 4
+```
+
+### Docker Commands
+```bash
+# Build Docker image
+docker build -t scanmountvolume:latest .
+
+# Run container
+docker run -d \
+  --name scanmountvolume \
+  -p 8056:8056 \
+  -v /mnt:/mnt:ro \
+  --env-file .env \
+  scanmountvolume:latest
+
+# Docker Compose
+docker-compose up -d
 ```
 
 ### Deployment Strategy
-- **Environment:** [e.g., Development, Staging, Production]
-- **Deployment Method:** [e.g., CI/CD pipeline, manual deploy]
-- **Deployment Command:** [command or description]
+- **Environment:** Development → Production
+- **Deployment Method:** Docker container via CI/CD
+- **Registry:** ghcr.io/jonathanicq/scanmountvolume
+
+---
+
+## CI/CD Pipeline (GitHub Actions)
+
+### Pipeline Stages
+1. **Lint** - Run Ruff, Black, mypy
+2. **Test** - Run pytest with coverage
+3. **Build** - Build Docker image
+4. **Push** - Push to GitHub Container Registry (on main branch)
+
+### Triggers
+- On push to any branch: lint + test
+- On push to master: lint + test + build + push
+- On pull request: lint + test
+
+---
+
+## Project Structure
+
+```
+scanmountvolume/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── scanmountvolume/
+│   ├── __init__.py
+│   ├── main.py              # FastAPI app entry
+│   ├── config.py            # Configuration management
+│   ├── models/              # SQLAlchemy models
+│   ├── api/                 # API routes
+│   ├── services/            # Business logic
+│   ├── scanner/             # File scanning logic
+│   └── templates/           # Jinja2 templates
+├── tests/
+│   ├── unit/
+│   └── integration/
+├── docs/
+│   └── adr/
+├── Dockerfile
+├── docker-compose.yml
+├── pyproject.toml
+├── requirements.txt
+├── requirements-dev.txt
+├── .env.example
+├── .gitignore
+├── README.md
+├── CHANGELOG.md
+├── PROJECT_CONFIG.md
+├── PROJECT_SCOPE.md
+└── MASTER_PLAN.md
+```
 
 ---
 
 ## Performance Considerations
-- [Consideration 1, e.g., Database indexing strategy]
-- [Consideration 2, e.g., Caching strategy]
-- [Consideration 3, e.g., API rate limiting]
+- **Database Indexing:** Index on file path, hash, volume_id, is_deleted
+- **Batch Inserts:** Insert files in batches of 1000 records
+- **Connection Pooling:** SQLAlchemy connection pool (pool_size=5, max_overflow=10)
+- **Async I/O:** Use aiofiles for file operations where beneficial
+- **Memory Management:** Stream large directories, don't load all into memory
 
 ---
 
 ## Additional Notes
-[Any project-specific notes, constraints, or special requirements]
+- Mount points must be accessible from the container/host running the scanner
+- For Docker deployment, mount network shares into container with read-only access
+- Web interface designed for single-user/admin use (basic auth sufficient)
+- Consider reverse proxy (nginx) for HTTPS in production
 
 ---
 
 ## Decision Lock
 **These decisions are locked for this project.** Any changes require explicit approval and must be documented with rationale in an ADR.
 
-**Locked on:** [Date]
-**Approved by:** [Name]
+**Locked on:** 2026-01-22
+**Approved by:** [Pending]
