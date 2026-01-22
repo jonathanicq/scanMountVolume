@@ -7,15 +7,17 @@ set -e
 # This script runs when the container starts and ensures the correct branch
 # is checked out based on the APP_ENV environment variable.
 #
-# Directory structure (all inside git repo):
-#   /opt/app/                  - Git repository root
+# Directory structure (code separate from data volumes):
+#   /opt/app/code/             - Git repository (application source)
 #   /opt/app/data/             - Persistent data (volume mount)
 #   /opt/app/logs/             - Application logs (volume mount)
 #   /opt/app/config/           - Configuration files (volume mount)
-#   /opt/app/scanmountvolume/  - Application source code
 # =============================================================================
 
-CODE_DIR="/opt/app"
+CODE_DIR="/opt/app/code"
+DATA_DIR="/opt/app/data"
+LOGS_DIR="/opt/app/logs"
+CONFIG_DIR="/opt/app/config"
 GIT_REPO_URL="${GIT_REPO_URL:-https://github.com/jonathanicq/scanMountVolume.git}"
 
 # -----------------------------------------------------------------------------
@@ -55,13 +57,12 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# Ensure required subdirectories exist
-# These may already exist from volume mounts
+# Ensure required directories exist (mkdir -p won't fail if they exist)
 # -----------------------------------------------------------------------------
 echo "[INFO] Ensuring application directories exist..."
-mkdir -p "$CODE_DIR/data"
-mkdir -p "$CODE_DIR/logs"
-mkdir -p "$CODE_DIR/config"
+mkdir -p "$DATA_DIR"
+mkdir -p "$LOGS_DIR"
+mkdir -p "$CONFIG_DIR"
 
 # -----------------------------------------------------------------------------
 # Install/update dependencies
@@ -91,14 +92,15 @@ echo "[INFO] ============================================"
 echo "[INFO] Environment: $APP_ENV"
 echo "[INFO] Branch:      $BRANCH"
 echo "[INFO] Code:        $CODE_DIR"
-echo "[INFO] Data:        $CODE_DIR/data"
-echo "[INFO] Logs:        $CODE_DIR/logs"
-echo "[INFO] Config:      $CODE_DIR/config"
+echo "[INFO] Data:        $DATA_DIR"
+echo "[INFO] Logs:        $LOGS_DIR"
+echo "[INFO] Config:      $CONFIG_DIR"
 echo "[INFO] Port:        ${APP_PORT:-8056}"
 echo "[INFO] ============================================"
 
 if [ -f "$CODE_DIR/scanmountvolume/main.py" ]; then
     echo "[INFO] Starting application..."
+    cd "$CODE_DIR"
     exec uvicorn scanmountvolume.main:app \
         --host "${APP_HOST:-0.0.0.0}" \
         --port "${APP_PORT:-8056}" \

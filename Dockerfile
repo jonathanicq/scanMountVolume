@@ -5,12 +5,11 @@
 #   - production → master branch
 #   - development → dev branch
 #
-# Directory structure (all inside /opt/app):
-#   /opt/app/                  - Git repository root
+# Directory structure:
+#   /opt/app/code/             - Git repository (application source)
 #   /opt/app/data/             - Persistent data (Docker volume)
 #   /opt/app/logs/             - Application logs (Docker volume)
 #   /opt/app/config/           - Configuration files (Docker volume)
-#   /opt/app/scanmountvolume/  - Application source code
 # =============================================================================
 
 FROM python:3.11-slim AS base
@@ -28,10 +27,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libmagic1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Create application directory
-RUN mkdir -p /opt/app
+# Create all application directories (using mkdir -p to prevent errors)
+RUN mkdir -p /opt/app/code /opt/app/data /opt/app/logs /opt/app/config
 
-WORKDIR /opt/app
+WORKDIR /opt/app/code
 
 # =============================================================================
 # Production stage
