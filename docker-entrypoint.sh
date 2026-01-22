@@ -35,8 +35,14 @@ else
 fi
 
 # -----------------------------------------------------------------------------
+# Ensure code directory exists and is clean
+# -----------------------------------------------------------------------------
+echo "[INFO] Preparing code directory: $CODE_DIR"
+mkdir -p "$CODE_DIR"
+
+# -----------------------------------------------------------------------------
 # Initialize or update repository
-# Uses git init method to work with pre-existing volume-mounted directories
+# Handles all edge cases: empty dir, non-git dir with files, existing repo
 # -----------------------------------------------------------------------------
 cd "$CODE_DIR"
 
@@ -47,12 +53,26 @@ if [ -d "$CODE_DIR/.git" ]; then
     git reset --hard origin/"$BRANCH"
     echo "[INFO] Updated to latest '$BRANCH' branch"
 else
-    echo "[INFO] Initializing repository in $CODE_DIR..."
-    git init
-    git remote add origin "$GIT_REPO_URL"
-    echo "[INFO] Fetching from remote..."
-    git fetch origin
-    git checkout -b "$BRANCH" origin/"$BRANCH"
+    # Check if directory has files (but no .git)
+    if [ "$(ls -A "$CODE_DIR" 2>/dev/null)" ]; then
+        echo "[WARN] Directory not empty but not a git repo. Cleaning..."
+        rm -rf "$CODE_DIR"/*
+        rm -rf "$CODE_DIR"/.[!.]* 2>/dev/null || true
+    fi
+
+    echo "[INFO] Cloning repository to $CODE_DIR..."
+    cd /tmp
+    rm -rf /tmp/repo_clone
+    git clone --branch "$BRANCH" --single-branch "$GIT_REPO_URL" /tmp/repo_clone
+
+    echo "[INFO] Moving code to $CODE_DIR..."
+    mv /tmp/repo_clone/.git "$CODE_DIR/"
+    mv /tmp/repo_clone/* "$CODE_DIR/" 2>/dev/null || true
+    mv /tmp/repo_clone/.[!.]* "$CODE_DIR/" 2>/dev/null || true
+    rm -rf /tmp/repo_clone
+
+    cd "$CODE_DIR"
+    git checkout "$BRANCH"
     echo "[INFO] Checked out '$BRANCH' branch successfully"
 fi
 
