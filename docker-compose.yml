@@ -5,11 +5,11 @@
 #   ./deploy.sh development   # Development mode (dev branch)
 #   ./deploy.sh production    # Production mode (master branch)
 #
-# Directory structure (code separate from data volumes):
-#   /opt/app/code/         - Git repository (application source)
-#   /opt/app/data/         - Persistent data (Docker volume)
-#   /opt/app/logs/         - Application logs (Docker volume)
-#   /opt/app/config/       - Configuration files (Docker volume)
+# Directory structure:
+#   /opt/docker/scanMountVolume/scanMountVolume/code/   - Git repository (source)
+#   /opt/docker/scanMountVolume/scanMountVolume/data/   - Persistent data
+#   /opt/docker/scanMountVolume/scanMountVolume/logs/   - Application logs
+#   /opt/docker/scanMountVolume/scanMountVolume/config/ - Configuration files
 # =============================================================================
 
 services:
@@ -44,10 +44,10 @@ services:
     volumes:
       # Mount network shares as read-only for scanning
       - /mnt:/mnt:ro
-      # Persist data directories (separate from code directory)
-      - scanmountvolume_data:/opt/app/data
-      - scanmountvolume_logs:/opt/app/logs
-      - scanmountvolume_config:/opt/app/config
+      # Persist data directories
+      - scanmountvolume_data:/opt/docker/scanMountVolume/scanMountVolume/data
+      - scanmountvolume_logs:/opt/docker/scanMountVolume/scanMountVolume/logs
+      - scanmountvolume_config:/opt/docker/scanMountVolume/scanMountVolume/config
     networks:
       - scanmountvolume_network
     # Health check disabled until application is implemented

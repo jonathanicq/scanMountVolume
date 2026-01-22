@@ -6,10 +6,10 @@
 #   - development → dev branch
 #
 # Directory structure:
-#   /opt/app/code/             - Git repository (application source)
-#   /opt/app/data/             - Persistent data (Docker volume)
-#   /opt/app/logs/             - Application logs (Docker volume)
-#   /opt/app/config/           - Configuration files (Docker volume)
+#   /opt/docker/scanMountVolume/scanMountVolume/code/   - Git repository (source)
+#   /opt/docker/scanMountVolume/scanMountVolume/data/   - Persistent data
+#   /opt/docker/scanMountVolume/scanMountVolume/logs/   - Application logs
+#   /opt/docker/scanMountVolume/scanMountVolume/config/ - Configuration files
 # =============================================================================
 
 FROM python:3.11-slim AS base
@@ -28,9 +28,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Create all application directories (using mkdir -p to prevent errors)
-RUN mkdir -p /opt/app/code /opt/app/data /opt/app/logs /opt/app/config
+RUN mkdir -p /opt/docker/scanMountVolume/scanMountVolume/code \
+             /opt/docker/scanMountVolume/scanMountVolume/data \
+             /opt/docker/scanMountVolume/scanMountVolume/logs \
+             /opt/docker/scanMountVolume/scanMountVolume/config
 
-WORKDIR /opt/app/code
+WORKDIR /opt/docker/scanMountVolume/scanMountVolume/code
 
 # =============================================================================
 # Production stage

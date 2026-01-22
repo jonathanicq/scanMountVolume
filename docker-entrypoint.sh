@@ -7,17 +7,18 @@ set -e
 # This script runs when the container starts and ensures the correct branch
 # is checked out based on the APP_ENV environment variable.
 #
-# Directory structure (code separate from data volumes):
-#   /opt/app/code/             - Git repository (application source)
-#   /opt/app/data/             - Persistent data (volume mount)
-#   /opt/app/logs/             - Application logs (volume mount)
-#   /opt/app/config/           - Configuration files (volume mount)
+# Directory structure:
+#   /opt/docker/scanMountVolume/scanMountVolume/code/   - Git repository (source)
+#   /opt/docker/scanMountVolume/scanMountVolume/data/   - Persistent data
+#   /opt/docker/scanMountVolume/scanMountVolume/logs/   - Application logs
+#   /opt/docker/scanMountVolume/scanMountVolume/config/ - Configuration files
 # =============================================================================
 
-CODE_DIR="/opt/app/code"
-DATA_DIR="/opt/app/data"
-LOGS_DIR="/opt/app/logs"
-CONFIG_DIR="/opt/app/config"
+APP_BASE="/opt/docker/scanMountVolume/scanMountVolume"
+CODE_DIR="$APP_BASE/code"
+DATA_DIR="$APP_BASE/data"
+LOGS_DIR="$APP_BASE/logs"
+CONFIG_DIR="$APP_BASE/config"
 GIT_REPO_URL="${GIT_REPO_URL:-https://github.com/jonathanicq/scanMountVolume.git}"
 
 # -----------------------------------------------------------------------------
