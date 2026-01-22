@@ -80,6 +80,8 @@ Thumbs.db
 # Docker
 .docker/
 
-# Local data
+# Local data and runtime directories
 data/
+logs/
+config/
 *.bak

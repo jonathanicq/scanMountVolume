@@ -7,13 +7,15 @@ set -e
 # This script runs when the container starts and ensures the correct branch
 # is checked out based on the APP_ENV environment variable.
 #
-# Directory structure:
-#   /opt/app  - Application code (cloned from git)
-#   /app/data - Persistent data (Docker volume)
+# Directory structure (all inside git repo):
+#   /opt/app/                  - Git repository root
+#   /opt/app/data/             - Persistent data (volume mount)
+#   /opt/app/logs/             - Application logs (volume mount)
+#   /opt/app/config/           - Configuration files (volume mount)
+#   /opt/app/scanmountvolume/  - Application source code
 # =============================================================================
 
 CODE_DIR="/opt/app"
-DATA_DIR="/app/data"
 GIT_REPO_URL="${GIT_REPO_URL:-https://github.com/jonathanicq/scanMountVolume.git}"
 
 # -----------------------------------------------------------------------------
@@ -31,21 +33,35 @@ else
 fi
 
 # -----------------------------------------------------------------------------
-# Clone or update repository
+# Initialize or update repository
+# Uses git init method to work with pre-existing volume-mounted directories
 # -----------------------------------------------------------------------------
+cd "$CODE_DIR"
+
 if [ -d "$CODE_DIR/.git" ]; then
     echo "[INFO] Repository exists, fetching updates..."
-    cd "$CODE_DIR"
     git fetch origin
     git checkout "$BRANCH" 2>/dev/null || git checkout -b "$BRANCH" origin/"$BRANCH"
     git reset --hard origin/"$BRANCH"
     echo "[INFO] Updated to latest '$BRANCH' branch"
 else
-    echo "[INFO] Cloning repository to $CODE_DIR..."
-    rm -rf "$CODE_DIR" 2>/dev/null || true
-    git clone --branch "$BRANCH" "$GIT_REPO_URL" "$CODE_DIR"
-    echo "[INFO] Cloned '$BRANCH' branch successfully"
+    echo "[INFO] Initializing repository in $CODE_DIR..."
+    git init
+    git remote add origin "$GIT_REPO_URL"
+    echo "[INFO] Fetching from remote..."
+    git fetch origin
+    git checkout -b "$BRANCH" origin/"$BRANCH"
+    echo "[INFO] Checked out '$BRANCH' branch successfully"
 fi
+
+# -----------------------------------------------------------------------------
+# Ensure required subdirectories exist
+# These may already exist from volume mounts
+# -----------------------------------------------------------------------------
+echo "[INFO] Ensuring application directories exist..."
+mkdir -p "$CODE_DIR/data"
+mkdir -p "$CODE_DIR/logs"
+mkdir -p "$CODE_DIR/config"
 
 # -----------------------------------------------------------------------------
 # Install/update dependencies
@@ -75,6 +91,9 @@ echo "[INFO] ============================================"
 echo "[INFO] Environment: $APP_ENV"
 echo "[INFO] Branch:      $BRANCH"
 echo "[INFO] Code:        $CODE_DIR"
+echo "[INFO] Data:        $CODE_DIR/data"
+echo "[INFO] Logs:        $CODE_DIR/logs"
+echo "[INFO] Config:      $CODE_DIR/config"
 echo "[INFO] Port:        ${APP_PORT:-8056}"
 echo "[INFO] ============================================"
 

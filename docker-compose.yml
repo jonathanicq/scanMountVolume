@@ -5,9 +5,12 @@
 #   ./deploy.sh development   # Development mode (dev branch)
 #   ./deploy.sh production    # Production mode (master branch)
 #
-# Directory structure inside container:
-#   /opt/app  - Application code (cloned from git)
-#   /data     - Persistent data (Docker volume)
+# Directory structure (all inside git repo at /opt/app):
+#   /opt/app/              - Git repository root
+#   /opt/app/data/         - Persistent data (Docker volume)
+#   /opt/app/logs/         - Application logs (Docker volume)
+#   /opt/app/config/       - Configuration files (Docker volume)
+#   /opt/app/scanmountvolume/  - Application source code
 # =============================================================================
 
 version: '3.8'
@@ -44,8 +47,10 @@ services:
     volumes:
       # Mount network shares as read-only for scanning
       - /mnt:/mnt:ro
-      # Persist application data (separate from code directory)
-      - scanmountvolume_data:/data
+      # Persist data subdirectories inside the repository
+      - scanmountvolume_data:/opt/app/data
+      - scanmountvolume_logs:/opt/app/logs
+      - scanmountvolume_config:/opt/app/config
     networks:
       - scanmountvolume_network
     # Health check disabled until application is implemented
@@ -58,6 +63,10 @@ services:
 
 volumes:
   scanmountvolume_data:
+    driver: local
+  scanmountvolume_logs:
+    driver: local
+  scanmountvolume_config:
     driver: local
 
 networks:
