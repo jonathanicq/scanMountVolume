@@ -2,12 +2,12 @@
 # scanMountVolume - Docker Compose Configuration
 # =============================================================================
 # Usage:
-#   Development: docker-compose up -d
-#   Production:  docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#   ./deploy.sh development   # Development mode (dev branch)
+#   ./deploy.sh production    # Production mode (master branch)
 #
-# Environment is controlled by APP_ENV in .env file:
-#   - development → pulls from 'dev' branch
-#   - production  → pulls from 'master' branch
+# Directory structure inside container:
+#   /opt/app  - Application code (cloned from git)
+#   /data     - Persistent data (Docker volume)
 # =============================================================================
 
 version: '3.8'
@@ -44,16 +44,17 @@ services:
     volumes:
       # Mount network shares as read-only for scanning
       - /mnt:/mnt:ro
-      # Persist application data
-      - scanmountvolume_data:/app/data
+      # Persist application data (separate from code directory)
+      - scanmountvolume_data:/data
     networks:
       - scanmountvolume_network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8056/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
+    # Health check disabled until application is implemented
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8056/health"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 60s
 
 volumes:
   scanmountvolume_data:
